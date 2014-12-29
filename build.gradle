@@ -43,10 +43,8 @@ def readVersion() {
     }
     def version = (result.getExitValue() == 0) ?
             output.toString().trim() : 'UNKNOWN'
-    def snapshotVersion = version.find(/^.*-SNAPSHOT/)
-    if (snapshotVersion != null) {
-        version = snapshotVersion
-    }
+    project.ext.isReleaseVersion = version.find(/^[^-]+-\d+-g.+/) == null
+
     println "Version ${version}"
     return version
 }
@@ -88,42 +86,45 @@ artifacts {
 }
 
 signing {
+    required { isReleaseVersion && gradle.taskGraph.hasTask("uploadArchives") }
     sign configurations.archives
 }
 
 uploadArchives {
-    repositories {
-        mavenDeployer {
-            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+    if (project.hasProperty("sonatypeUsername") && project.hasProperty("sonatypePassword")) {
+        repositories {
+            mavenDeployer {
+                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
-            repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2/') {
-                authentication(userName: sonatypeUsername, password: sonatypePassword)
-            }
+                repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2/') {
+                    authentication(userName: sonatypeUsername, password: sonatypePassword)
+                }
 
-            pom.project {
-                name 'logback-gelf'
-                packaging 'jar'
-                description 'Logback appender that sends GELF messages'
-                url 'https://github.com/pukkaone/logback-gelf'
-
-                scm {
-                    connection 'scm:git:git@github.com:pukkaone/logback-gelf.git'
-                    developerConnection 'scm:git:git@github.com:pukkaone/logback-gelf.git'
+                pom.project {
+                    name 'logback-gelf'
+                    packaging 'jar'
+                    description 'Logback appender that sends GELF messages'
                     url 'https://github.com/pukkaone/logback-gelf'
-                }
 
-                licenses {
-                    license {
-                        name 'MIT License'
-                        url 'http://opensource.org/licenses/MIT'
-                        distribution 'repo'
+                    scm {
+                        connection 'scm:git:git@github.com:pukkaone/logback-gelf.git'
+                        developerConnection 'scm:git:git@github.com:pukkaone/logback-gelf.git'
+                        url 'https://github.com/pukkaone/logback-gelf'
                     }
-                }
 
-                developers {
-                    developer {
-                        id 'pukkaone'
-                        name 'Chin Huang'
+                    licenses {
+                        license {
+                            name 'MIT License'
+                            url 'http://opensource.org/licenses/MIT'
+                            distribution 'repo'
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id 'pukkaone'
+                            name 'Chin Huang'
+                        }
                     }
                 }
             }
