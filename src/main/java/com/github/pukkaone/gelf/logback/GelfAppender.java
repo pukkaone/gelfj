@@ -40,6 +40,7 @@ public class GelfAppender extends AppenderBase<ILoggingEvent> {
     private boolean sslTrustAllCertificates;
     private GelfMessageFactory marshaller = new GelfMessageFactory();
     private GelfSender gelfSender;
+    private String mdcTimestampProperty;
 
     public String getGraylogHost() {
         return graylogHost;
@@ -209,6 +210,14 @@ public class GelfAppender extends AppenderBase<ILoggingEvent> {
         throws IOException, URISyntaxException, NoSuchAlgorithmException, KeyManagementException
     {
         return new GelfAMQPSender(amqpURI, amqpExchange, amqpRoutingKey, amqpMaxRetries);
+    }
+
+    public String getMdcTimestampProperty() {
+        return mdcTimestampProperty;
+    }
+
+    public void setMdcTimestampProperty(String mdcTimestampProperty) {
+        this.mdcTimestampProperty = mdcTimestampProperty;
     }
 
     @Override
