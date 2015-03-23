@@ -6,7 +6,9 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.util.LevelToSyslogSeverity;
 import com.github.pukkaone.gelf.protocol.GelfMessage;
 import java.lang.reflect.Method;
+import java.text.NumberFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.slf4j.Marker;
 
@@ -15,23 +17,6 @@ public class GelfMessageFactory {
     private PatternLayout shortPatternLayout;
     private PatternLayout fullPatternLayout;
 
-    static Map<String, Method> primitiveTypes;
-
-    static {
-        primitiveTypes = new HashMap<String, Method>();
-        try {
-            primitiveTypes.put("int", Integer.class.getDeclaredMethod("parseInt", String.class));
-            primitiveTypes.put("Integer", Integer.class.getDeclaredMethod("parseInt", String.class));
-            primitiveTypes.put("long", Long.class.getDeclaredMethod("parseLong", String.class));
-            primitiveTypes.put("Long", Long.class.getDeclaredMethod("parseLong", String.class));
-            primitiveTypes.put("float", Float.class.getDeclaredMethod("parseFloat", String.class));
-            primitiveTypes.put("Float", Float.class.getDeclaredMethod("parseFloat", String.class));
-            primitiveTypes.put("double", Double.class.getDeclaredMethod("parseDouble", String.class));
-            primitiveTypes.put("Double", Double.class.getDeclaredMethod("parseDouble", String.class));
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-    }
     public GelfMessageFactory() {
         // Short message contains event message and no stack trace.
         shortPatternLayout = new PatternLayout();
@@ -76,11 +61,11 @@ public class GelfMessageFactory {
             }
         }
 
-        Map<String, String> fieldTypes = appender.getFieldTypes();
+        List<String> numericFields = appender.getNumericFields();
         if (appender.isMdcIncluded()) {
             Map<String, String> mdc = event.getMDCPropertyMap();
             if (mdc != null) {
-                addFields(message, mdc, fieldTypes);
+                addFields(message, mdc, numericFields);
             }
         }
 
@@ -96,25 +81,24 @@ public class GelfMessageFactory {
         }
 
         Map<String, String> fields = appender.getAdditionalFields();
-        addFields(message, fields, fieldTypes);
+        addFields(message, fields, numericFields);
 
         return message;
     }
 
-    private void addFields(GelfMessage message, Map<String, String> fields, Map<String, String> fieldTypes)
+    private void addFields(GelfMessage message, Map<String, String> fields, List<String> numericFields)
     {
         for (Map.Entry<String, String> field : fields.entrySet()) {
                 String key = field.getKey();
-                Object value = convertFieldType(fieldTypes, key, field.getValue());
+                Object value = convertFieldType(numericFields, key, field.getValue());
                 message.addField(key, value);
         }
     }
 
-    private Object convertFieldType(Map<String, String> fieldTypes, String key, Object value) {
-        String fieldType = fieldTypes.get(key);
-        if (primitiveTypes.containsKey(fieldType)) {
+    private Object convertFieldType(List<String> numericFields, String key, Object value) {
+        if(numericFields.contains(key) && value != null) {
             try {
-                value = primitiveTypes.get(fieldType).invoke(null, value);
+                value = NumberFormat.getInstance().parse(value.toString());
             } catch (Exception e1) {
                 e1.printStackTrace();
             }

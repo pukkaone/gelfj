@@ -15,7 +15,9 @@ import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,7 +35,7 @@ public class GelfAppender extends AppenderBase<ILoggingEvent> {
     private boolean mdcIncluded;
     private boolean threadIncluded;
     private Map<String, String> additionalFields = new HashMap<>();
-    private Map<String, String> fieldTypes = new HashMap<>();
+    private List<String> numericFields = new ArrayList<>();
     private String amqpURI;
     private String amqpExchange;
     private String amqpRoutingKey;
@@ -143,19 +145,12 @@ public class GelfAppender extends AppenderBase<ILoggingEvent> {
          additionalFields.put(parts[0], parts[1]);
     }
 
-    public Map<String, String> getFieldTypes() {
-        return fieldTypes;
+    public List<String> getNumericFields() {
+        return numericFields;
     }
 
-    public void addFieldType(String keyValue) {
-        String[] parts = keyValue.split("=", 2);
-        if (parts.length != 2) {
-            addError(String.format(
-                "fieldType must be in the format key=value, but found [%s]",
-                keyValue));
-            return;
-        }
-         fieldTypes.put(parts[0], parts[1]);
+    public void addNumericField(String value) {
+        numericFields.add(value);
     }
 
     public String getAmqpURI() {
