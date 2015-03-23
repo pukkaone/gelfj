@@ -90,12 +90,12 @@ public class GelfMessageFactory {
     {
         for (Map.Entry<String, String> field : fields.entrySet()) {
                 String key = field.getKey();
-                Object value = convertFieldType(numericFields, key, field.getValue());
+                Object value = convertNumericField(numericFields, key, field.getValue());
                 message.addField(key, value);
         }
     }
 
-    private Object convertFieldType(List<String> numericFields, String key, Object value) {
+    private Object convertNumericField(List<String> numericFields, String key, Object value) {
         if(numericFields.contains(key) && value != null) {
             try {
                 value = NumberFormat.getInstance().parse(value.toString());

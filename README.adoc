@@ -32,7 +32,7 @@ Configure a logback appender to send by UDP (XML configuration format):
   <threadIncluded>false</threadIncluded>
   <additionalField>application=MyApplication</additionalField>
   <additionalField>environment=development</additionalField>
-  <fieldType>ResponseTimeMs=long</fieldType>
+  <numericField>ResponseTimeMs</numericField>
 </appender>
 --
 
@@ -87,9 +87,8 @@ To send by AMQP:
     Include an additional field with literal value in the GELF message.
     Give the field name and value in the format `key=value`. (*optional*)
 
-`fieldType`::
-    Convert field names to specific primitive types such as int, long, float or double.
-    Give the field name and value in the format `key=value`. (*optional*)
+`numericField`::
+    Convert field names to a numeric type.
 
 `amqpURI`::
     AMQP URI (*required when using AMQP integration*)
