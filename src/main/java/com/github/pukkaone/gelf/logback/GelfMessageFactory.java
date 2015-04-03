@@ -61,6 +61,11 @@ public class GelfMessageFactory {
             Map<String, String> mdc = event.getMDCPropertyMap();
             if (mdc != null) {
                 for (Map.Entry<String, String> entry : mdc.entrySet()) {
+                    if (entry.getKey().equals(appender.getMdcTimestampProperty())) {
+                        message.setTimestampMillis(Long.parseLong(entry.getValue()));
+                        continue;
+                    }
+
                     message.addField(entry.getKey(), entry.getValue());
                 }
             }
