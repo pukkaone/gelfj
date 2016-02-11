@@ -5,7 +5,7 @@ apply plugin: 'signing'
 
 group = 'com.github.pukkaone'
 
-sourceCompatibility = 1.8
+sourceCompatibility = 1.7
 
 repositories {
     mavenLocal()
