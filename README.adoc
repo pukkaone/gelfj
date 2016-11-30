@@ -3,6 +3,8 @@
 Send log events to a Graylog server by GELF protocol over UDP, TCP, TCP over
 SSL, or AMQP transport.
 
+image::https://maven-badges.herokuapp.com/maven-central/com.github.pukkaone/logback-gelf/badge.svg[Maven Central]
+
 
 == Usage
 
