@@ -107,6 +107,7 @@ public class GelfAMQPSender extends GelfSender {
                     routingKey,
                     properties,
                     toAMQPBuffer(message.toJson()).array());
+                channel.confirmSelect();
                 channel.waitForConfirms();
 
                 return true;
