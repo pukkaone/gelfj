@@ -38,6 +38,7 @@ public class GelfAppender extends AppenderBase<ILoggingEvent> {
     private String amqpExchange;
     private String amqpRoutingKey;
     private int amqpMaxRetries;
+    private boolean amqpAutomaticRecovery;
     private boolean sslTrustAllCertificates;
     private GelfMessageFactory marshaller = new DefaultGelfMessageFactory();
     private GelfSender gelfSender;
@@ -183,6 +184,14 @@ public class GelfAppender extends AppenderBase<ILoggingEvent> {
         this.amqpMaxRetries = amqpMaxRetries;
     }
 
+    public boolean isAmqpAutomaticRecovery() {
+        return amqpAutomaticRecovery;
+    }
+
+    public void setAmqpAutomaticRecovery(boolean amqpAutomaticRecovery) {
+        this.amqpAutomaticRecovery = amqpAutomaticRecovery;
+    }
+
     public boolean isSslTrustAllCertificates() {
         return sslTrustAllCertificates;
     }
@@ -222,10 +231,11 @@ public class GelfAppender extends AppenderBase<ILoggingEvent> {
             String amqpURI,
             String amqpExchange,
             String amqpRoutingKey,
-            int amqpMaxRetries)
+            int amqpMaxRetries,
+            boolean amqpAutomaticRecovery)
         throws IOException, URISyntaxException, NoSuchAlgorithmException, KeyManagementException
     {
-        return new GelfAMQPSender(amqpURI, amqpExchange, amqpRoutingKey, amqpMaxRetries);
+        return new GelfAMQPSender(amqpURI, amqpExchange, amqpRoutingKey, amqpMaxRetries, amqpAutomaticRecovery);
     }
 
     @Override
@@ -250,7 +260,7 @@ public class GelfAppender extends AppenderBase<ILoggingEvent> {
                 String udpGraylogHost = graylogHost.substring(4);
                 gelfSender = getGelfUDPSender(udpGraylogHost, graylogPort);
             } else if (amqpURI != null) {
-                gelfSender = getGelfAMQPSender(amqpURI, amqpExchange, amqpRoutingKey, amqpMaxRetries);
+                gelfSender = getGelfAMQPSender(amqpURI, amqpExchange, amqpRoutingKey, amqpMaxRetries, amqpAutomaticRecovery);
             } else {
                 gelfSender = getGelfUDPSender(graylogHost, graylogPort);
             }

@@ -45,6 +45,7 @@ To send by AMQP:
   <amqpExchange>messages</amqpExchange>
   <amqpRoutingKey>gelfudp</amqpRoutingKey>
   <amqpMaxRetries>5</amqpMaxRetries>
+  <amqpAutomaticRecovery>true</amqpAutomaticRecovery>
   <originHost>my.machine.example.com</originHost>
   <facility>gelf-java</facility>
   <additionalField>application=MyApplication</additionalField>
@@ -104,6 +105,9 @@ To send by AMQP:
 
 `amqpMaxRetries`::
     Maximum retries count; default value 0 (*optional*)
+
+`amqpAutomaticRecovery`::
+    Sets automatic recovery flag for underlying AMQP connection factory; default false (*optional*)
 
 `sslTrustAllCertificates`::
     Skip SSL server certificate validation; default false (*optional*)
