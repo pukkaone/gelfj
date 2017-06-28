@@ -26,11 +26,12 @@ public class GelfAMQPSender extends GelfSender {
     private int maxRetries;
 
     public GelfAMQPSender(
-            String host, String exchangeName, String routingKey, int maxRetries)
+            String host, String exchangeName, String routingKey, int maxRetries, boolean automaticRecovery)
         throws IOException, URISyntaxException, NoSuchAlgorithmException, KeyManagementException
     {
         factory = new ConnectionFactory();
         factory.setUri(host);
+        factory.setAutomaticRecoveryEnabled(automaticRecovery);
 
         this.exchangeName = exchangeName;
         this.routingKey = routingKey;
