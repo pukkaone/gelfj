@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    compile "ch.qos.logback:logback-classic:1.1.8"
+    compile "ch.qos.logback:logback-classic:1.1.9"
     compile "com.fasterxml.jackson.core:jackson-databind:2.8.5"
     compile "com.rabbitmq:amqp-client:3.6.3"
     testCompile 'junit:junit:4.12'
