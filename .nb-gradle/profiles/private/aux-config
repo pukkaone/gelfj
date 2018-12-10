@@ -11,6 +11,7 @@
       <group>
         <file>file:/Users/DCHILDERS/NetBeansProjects/logback-gelf/src/main/java/com/github/pukkaone/gelf/logback/GelfMessageFactory.java</file>
         <file>file:/Users/DCHILDERS/NetBeansProjects/logback-gelf/src/main/java/com/github/pukkaone/gelf/protocol/GelfTCPSender.java</file>
+        <file>file:/Users/DCHILDERS/NetBeansProjects/logback-gelf/README.adoc</file>
       </group>
     </open-files>
   </auxiliary>
